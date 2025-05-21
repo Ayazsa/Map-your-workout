@@ -133,10 +133,10 @@ class App {
     const duration = +inputDuration.value;
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
-    //if workkout runnng, create running object
+    //if workout running, create running object
     if (type === 'running') {
       const cadence = +inputCadence.value;
-      // chceck f data is valid
+      // check if data is valid
       if (
         !validInputs(distance, duration, cadence) ||
         !allPositive(distance, duration, cadence)
@@ -148,12 +148,15 @@ class App {
     //if workout cycling, create cycling object
     if (type === 'cycling') {
       const elevation = +inputElevation.value;
-      // chceck f data is valid
+      // check if data is valid
+      // distance and duration must be positive; elevation can be any number
       if (
-        !validInputs(distance, duration, elevation) ||
-        !validInputs(distance, duration)
+        !validInputs(distance, duration) ||
+        !allPositive(distance, duration)
       )
-        return alert('Inputs should be a positive number');
+        return alert('Distance and duration should be positive numbers');
+      if (!Number.isFinite(elevation))
+        return alert('Elevation must be a number');
       workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
@@ -161,9 +164,9 @@ class App {
     this.#workout.push(workout);
     // render workout on map as marker
     this._renderWorkoutMarker(workout);
-    //render wworkout on lst
+    //render workout on list
     this._renderWorkout(workout);
-    //hde form + clear input felds
+    //hide form + clear input fields
     this._hideForm();
     // set local storage to all the workouts
     this._setLocalStorage();
@@ -227,7 +230,7 @@ class App {
             <span class="workout__value">${workout.elevation}</span>
             <span class="workout__unit">m</span>
         </div>
-    </li> -->`;
+    </li>`;
     form.insertAdjacentHTML('afterend', html);
   }
   _moveToPopup(e) {
